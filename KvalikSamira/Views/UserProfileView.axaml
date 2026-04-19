@@ -1,0 +1,119 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KvalikSamira.ViewModels"
+             xmlns:models="using:KvalikSamira.Models"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="KvalikSamira.Views.UserProfileView"
+             x:DataType="vm:UserProfileViewModel">
+
+    <ScrollViewer>
+        <StackPanel Spacing="15" Margin="10">
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="5">
+                    <TextBlock Text="Мой профиль" FontWeight="Bold" FontSize="18"/>
+                    <TextBlock Text="{Binding UserInfo}"/>
+                    <TextBlock Text="{Binding BalanceText, StringFormat='Баланс: {0}'}" FontWeight="Bold" FontSize="16"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Пополнить баланс" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Номер карты:"/>
+                    <TextBox Text="{Binding CardNumber}" Watermark="0000 0000 0000 0000" MaxLength="19"/>
+                    <TextBlock Text="Сумма (руб.):"/>
+                    <TextBox Text="{Binding TopUpAmount}" Watermark="100.00"/>
+                    <Button Content="Пополнить" Command="{Binding TopUpBalanceCommand}" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Запись на услугу" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Услуга:"/>
+                    <ComboBox ItemsSource="{Binding AvailableServices}"
+                              SelectedItem="{Binding SelectedServiceForAppointment}"
+                              PlaceholderText="Выберите услугу"
+                              MinHeight="36"
+                              HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Service">
+                                <TextBlock Text="{Binding name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock Text="Мастер:"/>
+                    <ComboBox ItemsSource="{Binding AvailableMasters}"
+                              SelectedItem="{Binding SelectedMaster}"
+                              PlaceholderText="Выберите мастера"
+                              MinHeight="36"
+                              HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:User">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} {1}">
+                                            <Binding Path="lastName"/>
+                                            <Binding Path="firstName"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Button Content="Записаться" Command="{Binding BookAppointmentCommand}" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{Binding QueueInfo}" FontWeight="Bold" Foreground="Green"
+                               IsVisible="{Binding QueueInfo, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="5">
+                    <TextBlock Text="Мои записи" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Пока нет записей — выберите услугу и мастера выше и нажмите «Записаться»."
+                               Foreground="Gray" FontSize="12"
+                               IsVisible="{Binding !HasAppointments}"/>
+                    <ItemsControl ItemsSource="{Binding MyAppointments}" IsVisible="{Binding HasAppointments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:Appointment">
+                                <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="5" Margin="0,0,0,3">
+                                    <TextBlock TextWrapping="Wrap">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="Услуга: {0} | Мастер: {1} {2} | Очередь: #{3}">
+                                                <Binding Path="service.name"/>
+                                                <Binding Path="master.lastName"/>
+                                                <Binding Path="master.firstName"/>
+                                                <Binding Path="queueNumber"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Написать отзыв" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Отзыв привязывается к услуге и мастеру, выбранным в блоке «Запись на услугу» (мастера можно не указывать — отзыв только об услуге)."
+                               TextWrapping="Wrap" FontSize="12" Foreground="Gray"/>
+                    <TextBlock Text="Оценка (1-5):"/>
+                    <NumericUpDown Value="{Binding ReviewRating}" Minimum="1" Maximum="5" Increment="1"/>
+                    <TextBlock Text="Текст отзыва:"/>
+                    <TextBox Text="{Binding ReviewText}" AcceptsReturn="True" Height="80" TextWrapping="Wrap"
+                             Watermark="Напишите отзыв об услуге или мастере..."/>
+                    <Button Content="Отправить отзыв" Command="{Binding WriteReviewCommand}" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding StatusMessage}" FontSize="13"
+                       IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

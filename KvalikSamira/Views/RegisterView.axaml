@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KvalikSamira.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="KvalikSamira.Views.RegisterView"
+             x:DataType="vm:RegisterViewModel">
+
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border Padding="30" CornerRadius="5" BorderBrush="Gray" BorderThickness="1" MinWidth="350">
+            <StackPanel Spacing="10">
+                <TextBlock Text="Регистрация" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Фамилия: *"/>
+                <TextBox Text="{Binding LastName}" Watermark="Фамилия"/>
+
+                <TextBlock Text="Имя: *"/>
+                <TextBox Text="{Binding FirstName}" Watermark="Имя"/>
+
+                <TextBlock Text="Отчество:"/>
+                <TextBox Text="{Binding Patronymic}" Watermark="Отчество"/>
+
+                <TextBlock Text="Логин: *"/>
+                <TextBox Text="{Binding Login}" Watermark="Логин"/>
+
+                <TextBlock Text="Пароль: *"/>
+                <TextBox Text="{Binding Password}" PasswordChar="*" Watermark="Пароль"/>
+
+                <TextBlock Text="Подтверждение пароля: *"/>
+                <TextBox Text="{Binding ConfirmPassword}" PasswordChar="*" Watermark="Повторите пароль"/>
+
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" FontSize="12"
+                           IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                <Button Content="Зарегистрироваться" Command="{Binding RegisterCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,5,0,0"/>
+
+                <Button Content="Назад к авторизации" Command="{Binding GoToLoginCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

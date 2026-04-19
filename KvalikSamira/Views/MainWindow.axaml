@@ -1,0 +1,78 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:KvalikSamira.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="700"
+        x:Class="KvalikSamira.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/Logo.ico"
+        Title="Матье"
+        Width="1024"
+        Height="700"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        Background="#FFFFFF">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="40,*">
+        <Border Grid.Row="0" Background="#F0F0F0" PointerPressed="TitleBar_PointerPressed">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="Матье" VerticalAlignment="Center" Margin="15,0,0,0" FontWeight="Bold" FontSize="14"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" Margin="0,0,5,0">
+                    <Button Content="Свернуть" Click="MinimizeClick" VerticalAlignment="Center" Padding="10,5"/>
+                    <Button Content="Закрыть" Click="CloseClick" VerticalAlignment="Center" Padding="10,5"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="160,*">
+            <Border Grid.Column="0" Background="#F5F5F5" Padding="10">
+                <Grid RowDefinitions="Auto,Auto,*,Auto">
+                    <Image Grid.Row="0" Source="/Assets/Logo.png" Width="120" Height="100" Margin="0,10,0,10"/>
+
+                    <StackPanel Grid.Row="1" IsVisible="{Binding IsLoggedIn}" Margin="0,0,0,10">
+                        <TextBlock Text="{Binding CurrentUserName}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding CurrentRoleName}" FontSize="11" Foreground="Gray"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2"/>
+
+                    <StackPanel Grid.Row="3" Spacing="8" Margin="0,0,0,15">
+                        <Button Content="Каталог услуг" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding ShowGuestCatalogCommand}" IsVisible="{Binding !IsLoggedIn}"/>
+
+                        <Button Content="Услуги" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding ShowServicesCommand}" IsVisible="{Binding IsLoggedIn}"/>
+
+                        <Button Content="Мой профиль" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding ShowProfileCommand}" IsVisible="{Binding IsUser}"/>
+
+                        <Button Content="Модерация" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding ShowModeratorPanelCommand}" IsVisible="{Binding IsModerator}"/>
+
+                        <Button Content="Администратор" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding ShowAdminPanelCommand}" IsVisible="{Binding IsAdmin}"/>
+
+                        <Button Content="Мои клиенты" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding ShowMasterPanelCommand}" IsVisible="{Binding IsMaster}"/>
+
+                        <Button Content="Выйти из аккаунта" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Command="{Binding LogoutCommand}" IsVisible="{Binding IsLoggedIn}"/>
+
+                        <Button Content="Выход" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                Click="CloseClick"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" Margin="10"/>
+        </Grid>
+    </Grid>
+
+</Window>

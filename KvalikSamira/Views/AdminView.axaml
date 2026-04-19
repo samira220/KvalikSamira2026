@@ -1,0 +1,99 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KvalikSamira.ViewModels"
+             xmlns:models="using:KvalikSamira.Models"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="KvalikSamira.Views.AdminView"
+             x:DataType="vm:AdminViewModel">
+
+    <ScrollViewer>
+        <StackPanel Spacing="15" Margin="10">
+            <TextBlock Text="Панель администратора" FontWeight="Bold" FontSize="20"/>
+
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Пользователи" FontWeight="Bold" FontSize="16"/>
+                    <ListBox ItemsSource="{Binding UsersList}" SelectedItem="{Binding SelectedUser}" MaxHeight="250">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:User">
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} {1} | {2} | {3}">
+                                            <Binding Path="lastName"/>
+                                            <Binding Path="firstName"/>
+                                            <Binding Path="login"/>
+                                            <Binding Path="role.name"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Content="Редактировать" Command="{Binding StartEditUserCommand}"/>
+                        <Button Content="Добавить сотрудника" Command="{Binding ShowAddEmployeeCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border IsVisible="{Binding IsEditVisible}" BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="8" MaxWidth="400">
+                    <TextBlock Text="Редактирование пользователя" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Фамилия:"/>
+                    <TextBox Text="{Binding EditLastName}"/>
+                    <TextBlock Text="Имя:"/>
+                    <TextBox Text="{Binding EditFirstName}"/>
+                    <TextBlock Text="Отчество:"/>
+                    <TextBox Text="{Binding EditPatronymic}"/>
+                    <TextBlock Text="Логин:"/>
+                    <TextBox Text="{Binding EditLogin}"/>
+                    <TextBlock Text="Роль:"/>
+                    <ComboBox ItemsSource="{Binding RolesList}" SelectedItem="{Binding EditRole}" HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Role">
+                                <TextBlock Text="{Binding name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Content="Сохранить" Command="{Binding SaveEditUserCommand}"/>
+                        <Button Content="Отмена" Command="{Binding CancelEditCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border IsVisible="{Binding IsAddVisible}" BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3">
+                <StackPanel Spacing="8" MaxWidth="400">
+                    <TextBlock Text="Добавить сотрудника" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="Фамилия: *"/>
+                    <TextBox Text="{Binding NewLastName}"/>
+                    <TextBlock Text="Имя: *"/>
+                    <TextBox Text="{Binding NewFirstName}"/>
+                    <TextBlock Text="Отчество:"/>
+                    <TextBox Text="{Binding NewPatronymic}"/>
+                    <TextBlock Text="Логин: *"/>
+                    <TextBox Text="{Binding NewLogin}"/>
+                    <TextBlock Text="Пароль: *"/>
+                    <TextBox Text="{Binding NewPassword}" PasswordChar="*"/>
+                    <TextBlock Text="Роль:"/>
+                    <ComboBox ItemsSource="{Binding RolesList}" SelectedItem="{Binding NewRole}" HorizontalAlignment="Stretch">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Role">
+                                <TextBlock Text="{Binding name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button Content="Добавить" Command="{Binding AddEmployeeCommand}"/>
+                        <Button Content="Отмена" Command="{Binding CancelAddCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding StatusMessage}" FontSize="13"
+                       IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

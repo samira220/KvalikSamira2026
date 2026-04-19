@@ -1,0 +1,129 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KvalikSamira.ViewModels"
+             xmlns:models="using:KvalikSamira.Models"
+             xmlns:conv="using:KvalikSamira.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="KvalikSamira.Views.ServiceListView"
+             x:DataType="vm:ServiceListViewModel">
+
+    <UserControl.Resources>
+        <conv:ImagePathConverter x:Key="imagePathConverter"/>
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,10">
+            <Button Content="← К авторизации" HorizontalAlignment="Left"
+                    Command="{Binding BackToLoginCommand}" IsVisible="{Binding ShowGuestBackButton}"/>
+
+            <Grid ColumnDefinitions="*,Auto">
+                <TabControl Grid.Column="0" SelectedIndex="{Binding SelectedTabIndex}">
+                    <TabItem Header="Кастом"/>
+                    <TabItem Header="Косплей"/>
+                </TabControl>
+
+                <StackPanel Grid.Column="1" Spacing="5" VerticalAlignment="Top" Margin="10,5,0,0">
+                    <TextBox Text="{Binding SearchText}" Watermark="Поиск" Width="180"/>
+                    <ComboBox ItemsSource="{Binding CollectionsList}"
+                              SelectedItem="{Binding SelectedCollection}"
+                              PlaceholderText="Коллекция"
+                              Width="180">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Collection">
+                                <TextBlock Text="{Binding name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Content="Сбросить фильтр" Command="{Binding ClearCollectionFilterCommand}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    <Button Content="Добавить" Command="{Binding AddServiceCommand}"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            IsVisible="{Binding CanManageServices}"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <Panel>
+                <ItemsControl ItemsSource="{Binding CurrentServices}" IsVisible="{Binding !IsEditPanelVisible}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:Service">
+                            <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10" Padding="10" CornerRadius="3">
+                                <Grid ColumnDefinitions="150,*,Auto">
+                                    <Image Grid.Column="0" 
+                                           Source="{Binding imagePath, Converter={StaticResource imagePathConverter}}"
+                                           Width="130" Height="100" 
+                                           Stretch="Uniform"
+                                           Margin="0,0,10,0"/>
+
+                                    <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding name}" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="{Binding description}" TextWrapping="Wrap" MaxLines="2"/>
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="Цена: {0:F2} руб. | {1} мин.">
+                                                    <Binding Path="price"/>
+                                                    <Binding Path="durationMinutes"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding collection.name, StringFormat='Коллекция: {0}'}" 
+                                                   FontSize="11" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding modifiedAt, StringFormat='Изменено: {0:dd.MM.yyyy HH:mm}'}" 
+                                                   FontSize="11" Foreground="Gray"/>
+                                    </StackPanel>
+
+                                    <Button Grid.Column="2" Content="Ред." VerticalAlignment="Center"
+                                            Command="{Binding $parent[ItemsControl].DataContext.EditServiceCommand}"
+                                            CommandParameter="{Binding}"
+                                            IsVisible="{Binding $parent[ItemsControl].DataContext.CanManageServices}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Border IsVisible="{Binding IsEditPanelVisible}" 
+                        BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="3"
+                        Background="White">
+                    <StackPanel Spacing="10" MaxWidth="500">
+                        <TextBlock Text="Редактирование услуги" FontWeight="Bold" FontSize="16"/>
+                        
+                        <TextBlock Text="Название:"/>
+                        <TextBox Text="{Binding EditName}"/>
+                        
+                        <TextBlock Text="Описание:"/>
+                        <TextBox Text="{Binding EditDescription}" AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
+                        
+                        <TextBlock Text="Цена (руб.):"/>
+                        <TextBox Text="{Binding EditPrice}"/>
+                        
+                        <TextBlock Text="Длительность (мин.):"/>
+                        <TextBox Text="{Binding EditDuration}"/>
+
+                        <TextBlock Text="{Binding EditMasterInfo, StringFormat='Мастера: {0}'}" 
+                                   FontSize="12" Foreground="Gray"
+                                   IsVisible="{Binding EditMasterInfo, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                        
+                        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,10,0,0">
+                            <Button Content="Сохранить" Command="{Binding SaveServiceCommand}" Width="120"/>
+                            <Button Content="Отмена" Command="{Binding CancelEditCommand}" Width="120"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Panel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto,*" Margin="0,10,0,0">
+            <Button Grid.Column="1" Content="◀" FontSize="20" Command="{Binding PreviousPageCommand}"
+                    Padding="15,5" Margin="0,0,10,0"/>
+            <TextBlock Grid.Column="2" Text="{Binding PageInfo}" VerticalAlignment="Center" FontSize="14"/>
+            <Button Grid.Column="3" Content="▶" FontSize="20" Command="{Binding NextPageCommand}"
+                    Padding="15,5" Margin="10,0,0,0"/>
+        </Grid>
+    </Grid>
+
+</UserControl>

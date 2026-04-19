@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:KvalikSamira.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="KvalikSamira.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border Padding="30" CornerRadius="5" BorderBrush="Gray" BorderThickness="1" MinWidth="350">
+            <StackPanel Spacing="12">
+                <TextBlock Text="Авторизация" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Логин:"/>
+                <TextBox Text="{Binding Login}" Watermark="Введите логин"/>
+
+                <TextBlock Text="Пароль:"/>
+                <TextBox Text="{Binding Password}" PasswordChar="*" Watermark="Введите пароль"/>
+
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" FontSize="12"
+                           IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                <Button Content="Войти" Command="{Binding LoginCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,5,0,0"/>
+
+                <Button Content="Регистрация" Command="{Binding GoToRegisterCommand}"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
